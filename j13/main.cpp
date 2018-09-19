@@ -15,7 +15,7 @@
 // configuración, y escribiendo la respuesta
 bool solve() {
     map<int,int> tree;
-    long int nelems;
+    long int nelems, melems;
     std::cin >> nelems;
     if (nelems == 0)
         return false;
@@ -24,6 +24,15 @@ bool solve() {
         std::cin >> elem;
         tree.insert({elem,-1});
     }
+    std::cin >> melems;
+    for(int i = 0; i < melems; ++i){
+        long int elem;
+        bool found = false;
+        std::cin >> elem;
+        long int sol = tree.kesimo(elem,found);
+        std::cout << (found ? std::to_string(sol) : "??");
+    }
+    std::cout << "----\n";
     return true;
 
 }

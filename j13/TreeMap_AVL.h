@@ -123,6 +123,24 @@ public:
          o << "vacio\n";
    }
 
+   Clave kesimo(long int k, bool & found){
+        Link search_aux = raiz;
+        while(search_aux != nullptr && search_aux->tam_i != k){
+            if(search_aux->tam_i > k)
+                search_aux = search_aux->iz;
+            else
+                search_aux = search_aux->dr;
+        }
+        if(search_aux != nullptr){
+            found = true;
+            return search_aux->cv.clave;
+        }
+        else{
+            found = false;
+            return -1;
+        }
+   }
+
 protected:
 
    void copia(map_t const& other) {
