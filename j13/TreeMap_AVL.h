@@ -187,7 +187,10 @@ protected:
       }
       else if (menor(cv.clave, a->cv.clave)) {
          crece = inserta(cv, a->iz);
-         if (crece) reequilibraDer(a); // MODIFICAR TAM_I EN AMBOS CASOS, SI SE REEQUILIBRA Y SI NO
+         if (crece) {
+             reequilibraDer(a); // MODIFICAR TAM_I EN AMBOS CASOS, SI SE REEQUILIBRA Y SI NO
+         }
+
       }
       else if (menor(a->cv.clave, cv.clave)) {
          crece = inserta(cv, a->dr);
@@ -241,6 +244,7 @@ protected:
       k2->iz = k1;
       k1->altura = std::max(altura(k1->iz), altura(k1->dr)) + 1;
       k2->altura = std::max(altura(k2->iz), altura(k2->dr)) + 1;
+
       k1 = k2;
    }
 
