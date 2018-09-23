@@ -79,7 +79,7 @@ bool solve() {
             previous_end_time = top_task.get_end_time();
             if(top_task.is_looping()){
                 top_task.add_waiting_time();
-                if(top_task.get_ini_time() < total_time)
+                if(top_task.get_end_time() < total_time)
                     pqueue.push(top_task);
             }
         }
@@ -93,7 +93,7 @@ int main() {
     // Para la entrada por fichero.
     // Comentar para acepta el reto
 #ifndef DOMJUDGE
-    std::ifstream in("C:\\Users\\Alberto\\Documents\\git\\tais\\j23\\datos.txt");
+    std::ifstream in("/home/albertopastormr/Documents/git/tais/j23/datos.txt");
     auto cinbuf = std::cin.rdbuf(in.rdbuf()); //save old buf and redirect std::cin to casos.txt
 #endif
 
