@@ -125,11 +125,16 @@ public:
 
    Clave kesimo(long int k, bool & found){
         Link search_aux = raiz;
-        while(search_aux != nullptr && search_aux->tam_i != k){
-            if(search_aux->tam_i > k)
+        long int pos_aux = raiz->tam_i;
+        while(search_aux != nullptr && pos_aux != k){
+            if(pos_aux > k) {
                 search_aux = search_aux->iz;
-            else
+                pos_aux--;
+            }
+            else if (pos_aux < k) {
                 search_aux = search_aux->dr;
+                pos_aux++;
+            }
         }
         if(search_aux != nullptr){
             found = true;
@@ -188,13 +193,14 @@ protected:
       else if (menor(cv.clave, a->cv.clave)) {
          crece = inserta(cv, a->iz);
          if (crece) {
-             reequilibraDer(a); // MODIFICAR TAM_I EN AMBOS CASOS, SI SE REEQUILIBRA Y SI NO
+             reequilibraDer(a);
+             //a->tam_i++;
          }
 
       }
       else if (menor(a->cv.clave, cv.clave)) {
          crece = inserta(cv, a->dr);
-         if (crece) reequilibraIzq(a); // MODIFICAR TAM_I EN AMBOS CASOS, SI SE REEQUILIBRA Y SI NO
+         if (crece) reequilibraIzq(a);
       }
       else { // la clave ya estaba
          crece = false;
@@ -231,6 +237,7 @@ protected:
 
    static void rotaDer(Link & k2) {
       Link k1 = k2->iz;
+      k2->tam_i = k2->tam_i - k1->tam_i + 1;
       k2->iz = k1->dr;
       k1->dr = k2;
       k2->altura = std::max(altura(k2->iz), altura(k2->dr)) + 1;
@@ -240,6 +247,7 @@ protected:
 
    static void rotaIzq(Link & k1) {
       Link k2 = k1->dr;
+      k2->tam_i += k1->tam_i;
       k1->dr = k2->iz;
       k2->iz = k1;
       k1->altura = std::max(altura(k1->iz), altura(k1->dr)) + 1;
@@ -264,7 +272,9 @@ protected:
             rotaDerIzq(a);
          else rotaIzq(a);
       }
-      else a->altura = std::max(altura(a->iz), altura(a->dr)) + 1;
+      else {
+          a->altura = std::max(altura(a->iz), altura(a->dr)) + 1;
+      }
    }
 
    static void reequilibraDer(Link & a) {
@@ -273,7 +283,10 @@ protected:
             rotaIzqDer(a);
          else rotaDer(a);
       }
-      else a->altura = std::max(altura(a->iz), altura(a->dr)) + 1;
+      else {
+         a->tam_i++;
+          a->altura = std::max(altura(a->iz), altura(a->dr)) + 1;
+      }
    }
 
    bool borra(Clave const& c, Link & a)  {
@@ -326,7 +339,7 @@ protected:
       if (r != nullptr){
          print(o, indent + 2, r->dr);
          o << std::string(indent, ' ');
-         o << '(' << r->cv.clave << ',' << r->cv.valor << ")\n";
+         o << '(' << r->cv.clave << ',' << r->cv.valor << ',' << r->tam_i << ")\n";
          print(o, indent + 2, r->iz);
       }
    }

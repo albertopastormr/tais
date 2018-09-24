@@ -11,6 +11,9 @@
 #include "TreeMap_AVL.h"
 
 
+// [Coste kesimo()] O(log(N)) siendo N el numero de nodos del 'tree' para cada consulta (1,M),
+//  ya que desciende en el avl hasta llegar al final de una rama o encontrar el elemento que se busca
+
 // Resuelve un caso de prueba, leyendo de la entrada la
 // configuración, y escribiendo la respuesta
 bool solve() {
@@ -30,7 +33,7 @@ bool solve() {
         bool found = false;
         std::cin >> elem;
         long int sol = tree.kesimo(elem,found);
-        std::cout << (found ? std::to_string(sol) : "??");
+        std::cout << (found ? std::to_string(sol) : "??") << "\n";
     }
     std::cout << "----\n";
     return true;
@@ -41,7 +44,7 @@ int main() {
     // Para la entrada por fichero.
     // Comentar para acepta el reto
     #ifndef DOMJUDGE
-     std::ifstream in("datos.txt");
+     std::ifstream in("C:\\Users\\Alberto\\Documents\\git\\tais\\j13\\datos.txt");
      auto cinbuf = std::cin.rdbuf(in.rdbuf()); //save old buf and redirect std::cin to casos.txt
      #endif
 
