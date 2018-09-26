@@ -129,11 +129,13 @@ public:
         while(search_aux != nullptr && pos_aux != k){
             if(pos_aux > k) {
                 search_aux = search_aux->iz;
-                pos_aux--;
+                if(search_aux != nullptr)
+                    pos_aux -= search_aux->tam_i;
             }
             else if (pos_aux < k) {
                 search_aux = search_aux->dr;
-                pos_aux++;
+                if(search_aux != nullptr)
+                    pos_aux += search_aux->tam_i;
             }
         }
         if(search_aux != nullptr){
