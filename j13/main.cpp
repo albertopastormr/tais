@@ -27,6 +27,7 @@ bool solve() {
         std::cin >> elem;
         tree.insert({elem,-1});
     }
+    tree.print(std::cout);
     std::cin >> melems;
     for(int i = 0; i < melems; ++i){
         long int elem;

@@ -128,9 +128,10 @@ public:
         long int pos_aux = raiz->tam_i;
         while(search_aux != nullptr && pos_aux != k){
             if(pos_aux > k) {
+                long int tam_i_search_aux = search_aux->tam_i;
                 search_aux = search_aux->iz;
                 if(search_aux != nullptr)
-                    pos_aux -= search_aux->tam_i;
+                    pos_aux -=  (tam_i_search_aux - search_aux->tam_i);
             }
             else if (pos_aux < k) {
                 search_aux = search_aux->dr;
@@ -195,8 +196,8 @@ protected:
       else if (menor(cv.clave, a->cv.clave)) {
          crece = inserta(cv, a->iz);
          if (crece) {
+             a->tam_i++;
              reequilibraDer(a);
-             //a->tam_i++;
          }
 
       }
@@ -239,7 +240,7 @@ protected:
 
    static void rotaDer(Link & k2) {
       Link k1 = k2->iz;
-      k2->tam_i = k2->tam_i - k1->tam_i + 1;
+      k2->tam_i = k2->tam_i - k1->tam_i;
       k2->iz = k1->dr;
       k1->dr = k2;
       k2->altura = std::max(altura(k2->iz), altura(k2->dr)) + 1;
@@ -286,7 +287,6 @@ protected:
          else rotaDer(a);
       }
       else {
-         a->tam_i++;
           a->altura = std::max(altura(a->iz), altura(a->dr)) + 1;
       }
    }
