@@ -10,10 +10,20 @@
 #include <algorithm>
 #include "PriorityQueue.h"
 
+struct tInstrument{
+    int num_musicians;
+    int num_groups;
+    int num_musicians_group;
+
+    bool operator<(tInstrument const & r) const {
+        return this->num_musicians_group > r.num_musicians_group;
+    }
+};
+
 // Resuelve un caso de prueba, leyendo de la entrada la
 // configuración, y escribiendo la respuesta
 bool solve() {
-    PriorityQueue<int, std::greater<int>> pqueue; // La cola almacena el numero de musicos que comparten cada partitura
+    PriorityQueue<tInstrument> pqueue; // La cola almacena el numero de musicos que comparten cada partitura
     long int num_ins, num_sheets;
     std::cin >> num_sheets >> num_ins;
     if (!std::cin)
@@ -21,21 +31,24 @@ bool solve() {
     for(int i = 0; i < num_ins; ++i){
         int elem;
         std::cin >> elem;
-        pqueue.push(elem);
+        pqueue.push({elem, 1, elem});
     }
-    while(pqueue.size() < num_sheets && pqueue.top() > 1){
-        int top_elem = pqueue.top();
+    int num_changes = 0;
+    while(num_changes < num_sheets - pqueue.size() && pqueue.top().num_musicians_group > 1){
+        tInstrument top_elem = pqueue.top();
         pqueue.pop();
-        if(top_elem % 2 == 0){
-            pqueue.push(top_elem / 2);
-            pqueue.push(top_elem / 2);
+        top_elem.num_groups++;
+        if(top_elem.num_musicians % top_elem.num_groups == 0){
+            top_elem.num_musicians_group = top_elem.num_musicians / top_elem.num_groups;
+            pqueue.push(top_elem);
         }
         else{
-            pqueue.push(top_elem / 2);
-            pqueue.push((top_elem / 2) + 1);
+            top_elem.num_musicians_group = (top_elem.num_musicians / top_elem.num_groups) + 1;
+            pqueue.push(top_elem);
         }
+        num_changes++;
     }
-    std::cout << pqueue.top() << "\n";
+    std::cout << pqueue.top().num_musicians_group << "\n";
     return true;
 
 }
@@ -44,7 +57,7 @@ int main() {
     // Para la entrada por fichero.
     // Comentar para acepta el reto
 #ifndef DOMJUDGE
-    std::ifstream in("C:\\Users\\Alberto\\Documents\\git\\tais\\j25\\datos.txt");
+    std::ifstream in("/home/albertopastormr/Documents/git/tais/j25/datos.txt");
     auto cinbuf = std::cin.rdbuf(in.rdbuf()); //save old buf and redirect std::cin to casos.txt
 #endif
 
@@ -56,7 +69,7 @@ int main() {
     // Para restablecer entrada. Comentar para acepta el reto
 #ifndef DOMJUDGE // para dejar todo como estaba al principio
     std::cin.rdbuf(cinbuf);
-    system("PAUSE");
+
 #endif
 
     return 0;
