@@ -8,61 +8,26 @@
 #include <string>
 #include <algorithm>
 #include <vector>
-#include <unordered_set>
 
-struct pairhash {
-public:
-    template <typename T, typename V>
-    std::size_t operator()(const std::pair<T, V> &x) const
-    {
-        size_t seed = 0;
-        std::hash<int> h;
-        seed ^= h(x.first) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-        seed ^= h(x.second) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-        return seed;
-    }
-};
 
 class Sheeps{
 private:
     int rows, columns;
     std::vector< std::vector<bool> >marked;
-    int num_white_sheeps;
+    int num_white_stains;
 
     bool is_valid_position(int i, int j) const {
         return i < rows && i >= 0 && j < columns && j >= 0;
     }
 
-    bool is_white_sheep(std::vector< std::string> const& map, int i, int j, std::unordered_set<std::pair<int,int>, pairhash> const & bps){
-        int num_black_pixels = 0; // Numero de pixeles negros que tocan con el pixel blanco en cuestion
-        if(i == 2)
-            int a = 0;
-        for(auto d : dirs){
-            int ni = i + d.first, nj = j + d.second;
-            while(is_valid_position(ni,nj) && map[ni][nj] == '.')
-                ni += d.first, nj += d.second;
-            if(is_valid_position(ni,nj) && map[ni][nj] == 'X' && bps.count({ni,nj}) == 1)
-                ++num_black_pixels;
-        }
-            return num_black_pixels == 4;
-    }
-
     const std::vector<std::pair<int,int>> dirs = {{1,0},{0,1},{-1,0},{0,-1}};
 
-    void dfs(std::vector< std::string> const& map, int i, int j, std::unordered_set<std::pair<int,int>, pairhash> & bps, bool & white_sheep) {
-        if(map[i][j] == 'X') {
-            marked[i][j] = true;
-            bps.insert({i, j});
-        }
+    void dfs(std::vector< std::string> const& map, int i, int j) {
+        marked[i][j] = true;
         for (auto d : dirs) {
             int ni = i + d.first, nj = j + d.second;
-            if (is_valid_position(ni,nj)) {
-                if((map[ni][nj] == 'X' || (map[i][j] == 'X' && map[ni][nj] == '.')) && !marked[ni][nj])
-                    dfs(map, ni, nj, bps, white_sheep);
-                else if(map[ni][nj] == '.' && !marked[ni][nj] && is_white_sheep(map, ni, nj, bps)) {
-                    white_sheep = true;
-                    marked[ni][nj] = true;
-                }
+            if (is_valid_position(ni,nj) && map[ni][nj] == '.' && !marked[ni][nj]) {
+                dfs(map, ni, nj);
             }
         }
     }
@@ -70,23 +35,20 @@ private:
 public:
 
     Sheeps(std::vector<std::string> const & map) : rows(map.size()), columns(map[0].size()),
-                                                        marked(rows, std::vector<bool>(columns, false)), num_white_sheeps(0){
+                                                        marked(rows, std::vector<bool>(columns, false)), num_white_stains(0){
         for(int i = 0; i < rows; ++i){
             for(int j = 0; j < columns; ++j){
-                if(map[i][j] == 'X' && !marked[i][j]){
-                    // nueva oveja
-                    std::unordered_set<std::pair<int,int>, pairhash> black_pixels_sheep;
-                    bool found_white_sheep = false;
-                    dfs(map, i, j, black_pixels_sheep, found_white_sheep);
-                    if(found_white_sheep)
-                        num_white_sheeps++;
+                if(map[i][j] == '.' && !marked[i][j]){
+                    // nueva mancha blanca
+                    ++num_white_stains;
+                    dfs(map, i, j);
                 }
             }
         }
     }
 
     int get_num_white_sheeps() const{
-        return this->num_white_sheeps;
+        return this->num_white_stains - 1;
     }
 };
 
@@ -98,12 +60,9 @@ bool solve() {
     std::cin >> width >> height;
     if (! std::cin)
         return false;
-    std::string foo;
-    std::cin >> foo; // Desecho la primera fila, que no es valiosa
-    std::vector<std::string> map(height-2);
+    std::vector<std::string> map(height);
     for(std::string & line : map)
         std::cin >> line;
-    std::cin >> foo; // Desecho la ultima fila, que no es valiosa
 
     Sheeps sh(map);
     std::cout << sh.get_num_white_sheeps() << "\n";
