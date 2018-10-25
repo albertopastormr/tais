@@ -12,6 +12,7 @@
 #include <queue>
 #include <stack>
 #include <unordered_set>
+#include <cmath>
 
 const std::vector<std::pair<int,int>> dirs = {{1,0},{1,1},{0,1},{-1,1},{-1,0},{-1,-1},{0,-1},{1,-1}};
 
@@ -23,8 +24,8 @@ int vector_indexing(int i, int j, int columns) {
     return (i*columns) + j;
 }
 
-int distTo(int x1, int y1, int x2, int y2){
-    return std::abs(x1 - x2) + std::abs(y1 - y2);
+double distTo(int x1, int y1, int x2, int y2){
+    return sqrt(double((std::abs(x1 - x2)*std::abs(y1 - y2)) + (std::abs(y1 - y2)*std::abs(y1 - y2))));
 }
 
 // Resuelve un caso de prueba, leyendo de la entrada la
@@ -63,7 +64,7 @@ bool solve() {
             for (auto d : dirs) { // Une el arbol recibido por entrada con todos los posibles de su cercania
                 int nx = x + d.first + (d.first*u), ny = y + d.second + (d.second*u);
                 int nelem_vec_index = vector_indexing(nx, ny, num_columns_map);
-                if(elem_vec_index == 8 && u == 1)
+                if(nx ==0 && ny == 0)
                     int a = 0;
                 if (is_valid_position(nx,ny,num_rows_map,num_columns_map)
                         && distTo(x, y, nx, ny) <= num_max_dist && trees_processed.count(nelem_vec_index) == 1) {
