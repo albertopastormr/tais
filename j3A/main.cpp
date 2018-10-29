@@ -15,38 +15,38 @@ private:
 
     std::vector<bool> marked;
     int tree_root;
-    std::vector<int> sizes;
 
 
-    void dfs(GrafoDirigido const & g, int v, int & size){
+    bool dfs(GrafoDirigido const & g, int v, int & size){
+        bool ret = true;
         marked[v] = true;
-        int initial_size = size;
         ++size;
-        for(int w : g.ady(v)){
-            if(sizes[w] > 0)
-                size += sizes[w];
-            else if(!marked[w])
-                dfs(g,w,size);
+        int i = 0;
+        while(i < g.ady(v).size() && ret){
+            int w = g.ady(v)[i];
+
+            if(!marked[w])
+                ret = dfs(g,w,size);
+            else // En este caso no hay camino unico
+                ret = false;
+
+            ++i;
         }
-        sizes[v] = size - initial_size;
+        return ret;
     }
 
 public:
 
-    Connections(GrafoDirigido const & gd, GrafoDirigido const & gd_inv) : tree_root(-1),
-                                                                            sizes(gd.V(), 0), marked(gd.V(), false){
+    Connections(GrafoDirigido const & gd, GrafoDirigido const & gd_inv) : tree_root(-1), marked(gd.V(), false){
 
         int v = 0;
         while (v < gd.V() && tree_root == -1){
             if(gd_inv.ady(v).empty()){ // No tiene aristas salientes
                 int component_size = 0;
 
-                if(sizes[v] == 0)
-                    dfs(gd, v, component_size);
-                else
-                    component_size = sizes[v];
+                bool one_path =  dfs(gd, v, component_size);
 
-                if(component_size == gd.V() )
+                if(one_path && component_size == gd.V() )
                     tree_root = v;
             }
             ++v;

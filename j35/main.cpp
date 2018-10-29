@@ -15,6 +15,10 @@
 #include <unordered_map>
 #include <cmath>
 
+bool is_valid_position(int i, int j, int rows, int columns) {
+    return i < rows && i >= 0 && j < columns && j >= 0;
+}
+
 int vector_indexing(int i, int j, int columns) {
     return (i*columns) + j;
 }
@@ -58,12 +62,15 @@ bool solve() {
         int x = tree_to_process.first, y = tree_to_process.second;
         int elem_vec_index = vector_indexing(x, y, num_columns_map);
 
-        for(auto tree : trees_references){ // Comprobamos si podemos unir el arbol nuevo con los ya procesados anteriormente
-            int nx = tree.second.first, ny = tree.second.second;
-            int nelem_vec_index = tree.first;
+        for(int nx = (x-num_max_dist > 0 ? x-num_max_dist : 0); nx < num_rows_map && nx <= x+num_max_dist; ++nx){ // Comprobamos si podemos unir el arbol nuevo con los ya procesados anteriormente
+            for(int ny = (y-num_max_dist > 0 ? y-num_max_dist : 0); ny < num_columns_map && ny <= y+num_max_dist; ++ny){
+                int nelem_vec_index = vector_indexing(nx, ny, num_columns_map);
 
-            if (distTo(x, y, nx, ny) <= double(num_max_dist)) {
-                uf.unir(elem_vec_index, nelem_vec_index);
+                if (is_valid_position(nx, ny, num_rows_map, num_columns_map)
+                                                             && trees_references.count(nelem_vec_index) == 1
+                                                             && distTo(x, y, nx, ny) <= double(num_max_dist)) {
+                    uf.unir(elem_vec_index, nelem_vec_index);
+                }
             }
         }
 
