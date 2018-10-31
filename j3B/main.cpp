@@ -84,7 +84,8 @@ void solve() {
 
     std::vector<bool> marked(height*width, false);
     std::vector<int> distTo(height*width, -1);
-    bfs(map, origin_index, xorigin, yorigin, destination_index, height, width, marked, distTo, forbidden_cells);
+    if(forbidden_cells.count(origin_index) == 0)
+        bfs(map, origin_index, xorigin, yorigin, destination_index, height, width, marked, distTo, forbidden_cells);
     if(marked[destination_index])
         std::cout << distTo[destination_index] << "\n";
     else
