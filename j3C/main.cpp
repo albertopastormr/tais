@@ -38,17 +38,19 @@ private:
 public:
 
     Guards(Grafo const & g) : marked(g.V(), false) ,types(g.V(), '='), correct(true),
-                                count_symbol1(0), count_symbol2(0), min_num_guards(-1) {
+                                count_symbol1(0), count_symbol2(0), min_num_guards(0) {
         for(int v = 0; v < g.V(); ++v){
             if(!marked[v]){
                 types[v] = '-';
                 ++count_symbol1;
-                dfs(g, v);
+                if(!g.ady(v).empty()) {
+                    dfs(g, v);
+                    if (correct) {
+                        min_num_guards += std::min(count_symbol1, count_symbol2);
+                    }
+                }
+                count_symbol1 = count_symbol2 = 0;
             }
-        }
-
-        if(correct){
-            min_num_guards = std::min(count_symbol1, count_symbol2);
         }
     }
 

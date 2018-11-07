@@ -7,18 +7,15 @@
 #include <string>
 #include <algorithm>
 #include <vector>
-#include "GrafoValorado.h"
+#include "GrafoDirigidoValorado.h"
 #include "IndexPQ.h"
 
 const long int INF = 1000000000;
 
-void relax(int v, Arista<long int> const & e, std::vector<Arista<long int>> & edgeTo,
-        std::vector<long int> & distTo, std::vector<long int> & numPaths, IndexPQ<long int> & pq){
-    int w = e.otro(v);
-    if(distTo[w] == distTo[v] + e.valor()){
-        numPaths[w] += numPaths[v]; // Hemos encontrado otro camino minimo hasta la interseccion
-    }
-    else if(distTo[w] > distTo[v] + e.valor()){ // Es posible relajar, hemos encontrado un camino mas corto
+void relax(AristaDirigida<long int> const & e, std::vector<AristaDirigida<long int>> & edgeTo,
+    std::vector<long int> & distTo, std::vector<long int> & numPaths, IndexPQ<long int> & pq){
+    int v = e.from(), w = e.to();
+    if(distTo[w] > distTo[v] + e.valor()){ // Es posible relajar, hemos encontrado un camino mas corto
         distTo[w] = distTo[v] + e.valor();
         edgeTo[w] = e;
         numPaths[w] = numPaths[v];
@@ -26,8 +23,8 @@ void relax(int v, Arista<long int> const & e, std::vector<Arista<long int>> & ed
     }
 }
 
-void DijkstraSPTmod(GrafoValorado<long int> const & g, std::vector<Arista<long int>> & edgeTo,
-        std::vector<long int> & distTo, std::vector<long int> & numPaths, int const & s){
+void DijkstraSPTmod(GrafoDirigidoValorado<long int> const & g, std::vector<AristaDirigida<long int>> & edgeTo,
+    std::vector<long int> & distTo, std::vector<long int> & numPaths, int const & s){
     IndexPQ<long int> pq(g.V());
 
     numPaths[s] = 1;
@@ -36,10 +33,12 @@ void DijkstraSPTmod(GrafoValorado<long int> const & g, std::vector<Arista<long i
     while (!pq.empty()){
         int v = pq.top().elem; pq.pop();
         for(auto const & e : g.ady(v)){
-            relax(v, e, edgeTo, distTo,numPaths, pq);
+            relax(e, edgeTo, distTo,numPaths, pq);
         }
     }
 }
+
+
 
 
 // Resuelve un caso de prueba, leyendo de la entrada la
@@ -53,7 +52,7 @@ bool solve() {
 
     int num_edges;
     std::cin >> num_edges;
-    GrafoValorado<long int> gv(num_vertices);
+    GrafoDirigidoValorado<long int> gv(num_vertices);
     for(int i = 0; i < num_edges; ++i){
         int v, w;
         long int weight;
@@ -61,18 +60,20 @@ bool solve() {
         gv.ponArista({v-1,w-1,weight});
     }
 
-    std::vector<Arista<long int>> edgeTo(gv.V());
+    std::vector<AristaDirigida<long int>> edgeTo(gv.V());
     std::vector<long int> distTo(gv.V(), INF);
     std::vector<long int> numPaths(gv.V()); // Numero de caminos minimos hasta el vertice i
 
-    if(num_edges > 0){
-        DijkstraSPTmod(gv, edgeTo, distTo, numPaths, 0);
+    DijkstraSPTmod(gv, edgeTo, distTo, numPaths, 0);
 
-        std::cout << numPaths[gv.V()-1] << "\n";
-    }
-    else
-        std::cout << "0\n"; // No hay posibles caminos ya que no hay calles, vive en la misma interseccion
-                            // que donde se situa el colegio
+    std::vector<AristaDirigida<long int>> edgeToRet(gv.V());
+    std::vector<long int> distToRet(gv.V(), INF);
+    std::vector<long int> numPathsRet(gv.V()); // Numero de caminos minimos hasta el vertice i
+
+    DijkstraSPTmod(gv.inverso(), edgeToRet, distToRet, numPathsRet, 0);
+
+
+    // falta entrada
 
     return true;
 
