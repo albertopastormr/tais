@@ -11,18 +11,18 @@
 struct Building{ long int ini_coord, end_coord;};
 
 bool operator<(Building const & left, Building const & right){
-    return left.ini_coord < right.ini_coord ||
-            (left.ini_coord == right.ini_coord && left.end_coord > right.end_coord);
+    return left.end_coord < right.end_coord ||
+            (left.end_coord == right.end_coord && left.ini_coord < right.ini_coord);
 }
 
 long int opt_num_crosslines(std::vector<Building> const & v){
     // Inicializaciones coherentes a 1 <= N siendo N el numero de edificios de la playa
-    long int num_crosslines = 1, N = v.size(), curr_building_end = v[0].end_coord;
+    long int num_crosslines = 1, N = v.size(), curr_tunnel_position = v[0].end_coord;
     for(int i = 1; i < N; ++i){
         Building b = v[i];
-        if(b.ini_coord >= curr_building_end){
+        if(b.ini_coord >= curr_tunnel_position){
             ++num_crosslines;
-            curr_building_end = b.end_coord;
+            curr_tunnel_position = b.end_coord;
         }
     }
     return num_crosslines;
@@ -65,7 +65,7 @@ int main() {
     // Para restablecer entrada. Comentar para acepta el reto
 #ifndef DOMJUDGE // para dejar todo como estaba al principio
     std::cin.rdbuf(cinbuf);
-    system("PAUSE");
+    //system("PAUSE");
 #endif
 
     return 0;

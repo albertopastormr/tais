@@ -32,9 +32,9 @@ struct Movie{
 };
 
 bool operator<(Movie const & l, Movie const & r){
-    return l.initial_time_minutes < r.initial_time_minutes ||
-           (l.initial_time_minutes == r.initial_time_minutes
-            && l.end_time_minutes < r.end_time_minutes);
+    return l.end_time_minutes < r.end_time_minutes ||
+           (l.end_time_minutes == r.end_time_minutes
+            && l.initial_time_minutes < r.initial_time_minutes);
 }
 
 long int opt_num_movies(std::vector<Movie> const & v){
