@@ -22,34 +22,48 @@ bool operator<(Task const & l, Task const & r){
             && l.end_time_minutes < r.end_time_minutes);
 }
 
-long int opt_num_tasks(std::vector<Task> & v){
+long int opt_num_tasks(std::vector<Task> & v, long int end_time, bool & possible){
     std::sort(v.begin(), v.end());
-    long int N = v.size(), min_num_tasks = 1, max_end_time = v[0].end_time_minutes;
-    for(int i = 1; i < N; ++i){
+    possible = v[0].initial_time_minutes <= end_time;
+    long int N = v.size(), min_num_tasks = 1, max_end_time = v[0].end_time_minutes, curr_end_time = v[0].end_time_minutes;
+    for(int i = 1; i < N && possible && max_end_time < end_time; ++i){
         Task m = v[i];
-        if(m.initial_time_minutes >= curr_movie_end_time + 10){
-            curr_movie_end_time = m.end_time_minutes;
-            ++num_movies;
+        if(m.initial_time_minutes > max_end_time){
+            possible = false;
         }
+        else if(m.initial_time_minutes <= curr_end_time && max_end_time == curr_end_time)
+            ++min_num_tasks;
+        else if(m.initial_time_minutes > curr_end_time && m.initial_time_minutes <= max_end_time){
+            ++min_num_tasks;
+            curr_end_time = m.end_time_minutes;
+        }
+        max_end_time = std::max(max_end_time, m.end_time_minutes);
     }
-return min_num_tasks;
+    possible = (possible ? max_end_time >= end_time : possible);
+    return min_num_tasks;
 }
 
 // Resuelve un caso de prueba, leyendo de la entrada la
 // configuración, y escribiendo la respuesta
 bool solve() {
-    long int N;
-    std::cin >> N;
-    if (N == 0)
+    long int C, F, N;
+    std::cin >> C >> F >> N;
+    if (C == 0 && F == 0 && N == 0)
         return false;
-    std::vector<Task> billboard(N);
+    std::vector<Task> v(N);
     for(long int i = 0; i < N; ++i){
         long int initial_time, end_time;
         std::cin >> initial_time >> end_time;
-        billboard[i] = {initial_time, end_time};
+        v[i] = {initial_time, end_time};
+    }
+    if(N == 0)
+        std::cout << "Imposible\n";
+    else{
+        bool possible = true;
+        long int sol = opt_num_tasks(v, F, possible);
+        std::cout << (possible ? std::to_string(sol) : "Imposible") << "\n";
     }
 
-    std::cout << opt_num_tasks(billboard) << "\n";
     return true;
 
 }
