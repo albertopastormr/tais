@@ -18,14 +18,24 @@ struct ConfTime{
 };
 
 bool operator<(ConfTime const & l, ConfTime const & r){
-    return l.minutes < r.minutes;
+    return l.minutes < r.minutes || (l.minutes == r.minutes && l.type == 'F' && r.type != 'F');
 }
 
-long int opt_num_friends(std::vector<ConfTime> const & v){
-    long int N = v.size(), num_friends = 1;
+long int opt_num_friends(std::vector<ConfTime> & v){
+    long int N = v.size(), max_num_friends = 0, num_confs_running = 0;
+    std::sort(v.begin(), v.end());
 
-
-    return num_friends;
+    for(long int i =0; i < N; ++i){
+        ConfTime elem = v[i];
+        if(elem.type == 'I'){
+            ++num_confs_running;
+            max_num_friends = std::max(max_num_friends, num_confs_running);
+        }
+        else
+            --num_confs_running;
+    }
+    --max_num_friends;
+    return max_num_friends;
 }
 
 // Resuelve un caso de prueba, leyendo de la entrada la
@@ -42,8 +52,6 @@ bool solve() {
         conf_times.push_back({initial_time, 'I'});
         conf_times.push_back({end_time, 'F'});
     }
-
-    std::sort(conf_times.begin(), conf_times.end());
 
     std::cout << opt_num_friends(conf_times) << "\n";
     return true;
