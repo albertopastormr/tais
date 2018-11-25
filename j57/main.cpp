@@ -19,7 +19,7 @@ struct Task{
 bool operator<(Task const & l, Task const & r){
     return l.initial_time_minutes < r.initial_time_minutes ||
            (l.initial_time_minutes == r.initial_time_minutes
-            && l.end_time_minutes < r.end_time_minutes);
+            && l.end_time_minutes > r.end_time_minutes);
 }
 
 long int opt_num_tasks(std::vector<Task> & v, long int end_time, bool & possible){
@@ -31,9 +31,9 @@ long int opt_num_tasks(std::vector<Task> & v, long int end_time, bool & possible
         if(m.initial_time_minutes > max_end_time){
             possible = false;
         }
-        else if(m.initial_time_minutes <= curr_end_time && max_end_time == curr_end_time)
+        else if(m.initial_time_minutes <= curr_end_time && m.end_time_minutes >max_end_time && max_end_time == curr_end_time)
             ++min_num_tasks;
-        else if(m.initial_time_minutes > curr_end_time && m.initial_time_minutes <= max_end_time){
+        else if(m.initial_time_minutes > curr_end_time){
             ++min_num_tasks;
             curr_end_time = m.end_time_minutes;
         }
