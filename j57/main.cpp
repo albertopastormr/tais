@@ -22,22 +22,23 @@ bool operator<(Task const & l, Task const & r){
             && l.end_time_minutes > r.end_time_minutes);
 }
 
-long int opt_num_tasks(std::vector<Task> & v, long int end_time, bool & possible){
+long int opt_num_tasks(std::vector<Task> & v, long int initial_time, long int end_time, bool & possible){
     std::sort(v.begin(), v.end());
-    possible = v[0].initial_time_minutes <= end_time;
-    long int N = v.size(), min_num_tasks = 1, max_end_time = v[0].end_time_minutes, curr_end_time = v[0].end_time_minutes;
-    for(int i = 1; i < N && possible && max_end_time < end_time; ++i){
+    possible = v[0].initial_time_minutes <= initial_time;
+    long int N = v.size(), i =1, min_num_tasks = 1, max_end_time = v[0].end_time_minutes, curr_end_time = v[0].end_time_minutes;
+    while(i < N && possible && max_end_time < end_time){
         Task m = v[i];
-        if(m.initial_time_minutes > max_end_time){
+        if(m.initial_time_minutes > max_end_time)
             possible = false;
-        }
-        else if(m.initial_time_minutes <= curr_end_time && m.end_time_minutes >max_end_time && max_end_time == curr_end_time)
+        else {
+            while (i < N && m.initial_time_minutes <= curr_end_time && max_end_time < end_time) {
+                max_end_time = std::max(max_end_time, m.end_time_minutes);
+                ++i;
+                m = v[i];
+            }
+            curr_end_time = max_end_time;
             ++min_num_tasks;
-        else if(m.initial_time_minutes > curr_end_time){
-            ++min_num_tasks;
-            curr_end_time = m.end_time_minutes;
         }
-        max_end_time = std::max(max_end_time, m.end_time_minutes);
     }
     possible = (possible ? max_end_time >= end_time : possible);
     return min_num_tasks;
@@ -60,7 +61,7 @@ bool solve() {
         std::cout << "Imposible\n";
     else{
         bool possible = true;
-        long int sol = opt_num_tasks(v, F, possible);
+        long int sol = opt_num_tasks(v, C, F, possible);
         std::cout << (possible ? std::to_string(sol) : "Imposible") << "\n";
     }
 
