@@ -24,23 +24,24 @@ bool operator<(Task const & l, Task const & r){
 
 long int opt_num_tasks(std::vector<Task> & v, long int initial_time, long int end_time, bool & possible){
     std::sort(v.begin(), v.end());
-    possible = v[0].initial_time_minutes <= initial_time;
-    long int N = v.size(), i =1, min_num_tasks = 1, max_end_time = v[0].end_time_minutes, curr_end_time = v[0].end_time_minutes;
-    while(i < N && possible && max_end_time < end_time){
+    possible = true;
+    long int N = v.size(), i =0, min_num_tasks = 0, curr_end_time = initial_time;
+    while(i < N && possible && curr_end_time < end_time){
+        long int max_end_time = -1;
         Task m = v[i];
-        if(m.initial_time_minutes > max_end_time)
-            possible = false;
-        else {
-            while (i < N && m.initial_time_minutes <= curr_end_time && max_end_time < end_time) {
-                max_end_time = std::max(max_end_time, m.end_time_minutes);
-                ++i;
-                m = v[i];
-            }
-            curr_end_time = max_end_time;
-            ++min_num_tasks;
+        while (i < N && m.initial_time_minutes <= curr_end_time && max_end_time < end_time) {
+            max_end_time = std::max(max_end_time, m.end_time_minutes);
+            ++i;
+            m = v[i];
         }
+
+        if(max_end_time == -1)
+            possible = false;
+        else
+            curr_end_time = max_end_time;
+        ++min_num_tasks;
     }
-    possible = (possible ? max_end_time >= end_time : possible);
+    possible = (possible ? curr_end_time >= end_time : possible);
     return min_num_tasks;
 }
 
