@@ -72,7 +72,7 @@ bool solve() {
         if(cofres_recogidos[i])
             std::cout << cofres_originales[i] << " " << valores[i] << "\n";
     }
-    std::cout << "---\n";
+    std::cout << "----\n";
     return true;
 
 }
