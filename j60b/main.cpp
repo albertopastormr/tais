@@ -8,6 +8,7 @@
 #include <string>
 #include <algorithm>
 #include <vector>
+#include "Matriz.h"
 
 const long int INF = 1000000000;
 
@@ -101,7 +102,7 @@ int main() {
     // Para la entrada por fichero.
     // Comentar para acepta el reto
 #ifndef DOMJUDGE
-    std::ifstream in("/home/albertopastormr/Documents/git/tais/j60/datos.txt");
+    std::ifstream in("/home/albertopastormr/Documents/git/tais/j60b/datos.txt");
     auto cinbuf = std::cin.rdbuf(in.rdbuf()); //save old buf and redirect std::cin to casos.txt
 #endif
 
