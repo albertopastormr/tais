@@ -12,20 +12,27 @@
 
 const std::pair<int,int> moves[] = {{-1,-1},{-1,0},{-1,1}};
 
-int opt_num_moves(Matriz<int> & M, int n, int m){
+std::pair<int,int> opt_num_moves(Matriz<int> & M, int n, int m){
     for(int i = 2; i <= n; ++i){
         for(int j = 1; j <= m; ++j){
             int max_prev_row = -1;
             for(auto diff_coord : moves){
                 int dx = i + diff_coord.first, dy = j + diff_coord.second;
                 if(M.posCorrecta(dx, dy))
-                    std::max(max_prev_row, M[dx][dy]);
+                    max_prev_row = std::max(max_prev_row, M[dx][dy]);
             }
-            // pendiente
+            M[i][j] = M[i][j] + max_prev_row;
         }
     }
 
-    int max_elem = , max_elem_index = -1;
+    int max_elem = -1, max_elem_index = -1;
+    for(int k = 1; k <= n; ++k){
+        if(M[n][k] > max_elem){
+            max_elem = M[n][k];
+            max_elem_index = k;
+        }
+    }
+    return {max_elem,max_elem_index};
 }
 
 // Resuelve un caso de prueba, leyendo de la entrada la
@@ -44,6 +51,8 @@ bool solve() {
         }
     }
 
+    auto sol = opt_num_moves(board, N, N);
+    std::cout << sol.first << " " << sol.second << "\n";
 
     return true;
 
@@ -53,7 +62,7 @@ int main() {
     // Para la entrada por fichero.
     // Comentar para acepta el reto
 #ifndef DOMJUDGE
-    std::ifstream in("datos.txt");
+    std::ifstream in("/home/albertopastormr/Documents/git/tais/j62/datos.txt");
     auto cinbuf = std::cin.rdbuf(in.rdbuf()); //save old buf and redirect std::cin to casos.txt
 #endif
 
