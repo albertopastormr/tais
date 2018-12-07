@@ -19,10 +19,8 @@ bool is_possible_MAXL(std::vector<int> const & L, int MAXL){
         // Ya que queremos calcular los valores de la fila nueva
         // con los valores de la fila previa(valores antiguos)
         // debemos recorrer de derecha a izquierda
-        for(int j = MAXL; j >= 1; --j){
-            if(L[i] <= j){
-                C[j] = C[j] || C[j - L[i]];
-            }
+        for(int j = MAXL; j >= L[i]; --j){
+            C[j] = C[j] || C[j - L[i]];
         }
     }
     return C[MAXL];
