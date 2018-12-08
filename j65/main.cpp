@@ -40,8 +40,9 @@ int chains(Matriz<int> const & G){
         }
     }
     // Una vez ya esta formada la matriz C, busco el valor del camino maximo
-    int i = 1, j = 1, max_connection = 0;
+    int i = 1, max_connection = 0;
     while(i <= n && max_connection != -1){
+        int j = 1;
         while(j <= n && max_connection != -1){
             if(i != j && C[i][j] < INF){
                 max_connection = std::max(max_connection, C[i][j]);
