@@ -35,19 +35,30 @@ struct Movie{
     }
 };
 
-int dinamique(std::vector<Movie> const & movies, int n){
-    Matriz<int> M(n, n, 0);
-    for (int d = 1; d < n; ++d) { // diferencia entre i y j
-        for (int i = 0; i + d < n; i++) {
-            int j = i + d, max_dur = 0;
-            for (int k = i + 1; k < j; k++) {
-                max_dur = std::max(M[i][k] + M[k][j], max_dur);
-            }
-            M[i][j] = max_dur;
-        }
-    }
-    return M[0][n - 1];
+bool operator<(Movie const & l, Movie const & r){
+    return l.ini < r.ini ||
+           (l.ini == r.ini
+            && l.end < r.end);
+}
 
+int dinamique(std::vector<Movie> & movies){
+    std::sort(movies.begin(), movies.end());
+    int n = movies.size() - 1;
+    std::vector<int> dinam(n+1,0);
+    dinam[n] = movies[n].duration;
+    int i = n;
+    while(i >= 1){
+        int j = i;
+        while(j < n){
+            if(movies[i].end <= movies[j+1].ini - 10) // Me quedo con ambas peliculas
+                dinam[i] =  std::max(dinam[i], movies[i].duration + dinam[j+1]);
+            else
+                dinam[i] = std::max(dinam[i], std::max(movies[i].duration, dinam[j+1]));
+            ++j;
+        }
+        --i;
+    }
+    return dinam[1];
 }
 
 // Resuelve un caso de prueba, leyendo de la entrada la
@@ -55,7 +66,7 @@ int dinamique(std::vector<Movie> const & movies, int n){
 bool solve() {
     int N;
     std::cin >> N;
-    if (!std::cin)
+    if (N == 0)
         return false;
     std::vector<Movie> movies(N+1);
     for(int i = 1; i <= N; ++i){
@@ -65,7 +76,7 @@ bool solve() {
         movies[i] = Movie(ini_time, duration);
     }
 
-    std::cout << dinamique(movies, N+2) << "\n";
+    std::cout << dinamique(movies) << "\n";
     return true;
 }
 
