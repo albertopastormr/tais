@@ -20,10 +20,9 @@ std::pair<bool,int> opt_num_coins(std::vector<int> const & val_c, std::vector<in
     C[0] = 0;
     for(int i = 1; i <= N; ++i){
         for(int j = MAXC; j >= val_c[i]; --j){
-            for(int k = 1; k <= num_c[i]; ++k){
-                // pendiente
-                C[j] = std::min(C[j], C[j - val_c[i]] + 1);
-                B[j] = B[j] || B[j - val_c[i]];
+            for(int k = 1; k <= num_c[i] && j - k*val_c[i] >= 0; ++k){
+                C[j] = std::min(C[j], C[j - k*val_c[i]] + k);
+                B[j] = B[j] || B[j - k*val_c[i]];
             }
         }
     }
@@ -68,7 +67,7 @@ int main() {
     // Para la entrada por fichero.
     // Comentar para acepta el reto
 #ifndef DOMJUDGE
-    std::ifstream in("/home/albertopastormr/Documents/git/tais/j60/datos.txt");
+    std::ifstream in("/home/albertopastormr/Documents/git/tais/j68/datos.txt");
     auto cinbuf = std::cin.rdbuf(in.rdbuf()); //save old buf and redirect std::cin to casos.txt
 #endif
 
