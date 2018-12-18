@@ -12,21 +12,22 @@
 const int INF = 1000000000;
 
 int trim(std::string const & word, int n){
-    Matriz<int> M(n, n, INF);
+    Matriz<int> M(n, n, 0);
 
     for(int t = 0; t < n; ++t)
         M[t][t] = 1;
 
-    for (int d = 2; d < n; ++d) { // diferencia entre i y j
+    for (int d = 1; d < n; ++d) { // diferencia entre i y j
         for (int i = 0; i + d < n; i++) {
             int j = i + d, ki = i, kj = j;
 
-            while(ki <= j-1 && word[ki] == word[ki+1])
+            while(ki <= kj-1 && word[ki] == word[ki+1])
                 ++ki;
-            while(i+1 <= kj && word[kj] == word[kj-1])
+            while(ki+1 <= kj && word[kj] == word[kj-1])
                 --kj;
-
-            if(word[ki] == word[kj])
+            if(ki == kj)
+                M[i][j] = M[ki][kj];
+            else if(word[ki] == word[kj])
                 M[i][j] = M[ki+1][kj-1] + 1;
             else
                 M[i][j] = std::min(M[ki+1][kj]+1, M[ki][kj-1]+1);
@@ -41,6 +42,7 @@ int trim(std::string const & word, int n){
 bool solve() {
     std::string word_to_trim;
     std::cin >> word_to_trim;
+    //word_to_trim = ' '+word_to_trim;
     if (!std::cin)
         return false;
 
