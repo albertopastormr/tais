@@ -18,24 +18,24 @@
 // Matriz[i][j] =   { 1                                          Si i == j and w[i] in codes
 //                  { 0                                          Si i == j and w[i] not in codes
 //                  { Matriz[i+1][j] + Matriz[i][j-1] + 1        Si i < j and w[i]+..+w[j] in codes
-//                  { Matriz[i+1][j] + Matriz[i][j-1]            Resto
+//                  { Matriz[i+1][j] + Matriz[i][j-1]            Resto ( i < j)
 //
 //                  siendo 'codes' el conjunto de codigos
 
 int tia(std::unordered_set<std::string> const & codes,std::string const & message, int n){
     Matriz<int> M(n, n, 0);
 
-    /*for(int t = 0; t < n; ++t)
-        M[t][t] = codes.count(std::string(1,message[t]));*/
+    for(int t = 0; t < n; ++t)
+        M[t][t] = codes.count(std::string(1,message[t]));
 
     for (int d = 1; d < n; ++d) { // diferencia entre i y j
         for (int i = 0; i + d < n; i++) {
-            int j = i + d, substr_is_code = codes.count(message.substr(i,j));
-            std::string hola = message.substr(i,j);
+            int j = i + d, len = j-i+1, substr_is_code = codes.count(message.substr(i,len));
+            std::string hola = message.substr(i,len);
             M[i][j] = std::max(M[i+1][j], M[i][j-1]) + substr_is_code;
         }
     }
-    return M[0][n - 1];
+    return M[0][n - 1] % 1000000007;
 
 }
 
