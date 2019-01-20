@@ -20,11 +20,14 @@ int tia(std::unordered_set<std::string> const & codes,std::string const & messag
     for(int i = n-1; i >=0; --i){
         if(message[i] == '0')
             V[i] = V[i+1]; // los 0s nunca pueden estar al final del mensaje
-        else
-            V[i] = (codes.count(message.substr(i,1)) ? (valid_pos(i+1,n) ? V[i+1] : 1) : 0)
-                    + (i < n-1 && codes.count(message.substr(i,2)) ? (valid_pos(i+2,n) ? V[i+2] : 1) : 0)
-                    + (i < n-2 && codes.count(message.substr(i,3)) ? (valid_pos(i+3,n) ? V[i+3] : 1) : 0)
-                    % 1000000007;
+        else {
+            V[i] = (codes.count(message.substr(i, 1)) ? (valid_pos(i + 1, n) ? V[i + 1] : 1) : 0);
+            V[i] %= 1000000007;
+            V[i] += (i < n - 1 && codes.count(message.substr(i, 2)) ? (valid_pos(i + 2, n) ? V[i + 2] : 1) : 0);
+            V[i] %= 1000000007;
+            V[i] += (i < n - 2 && codes.count(message.substr(i, 3)) ? (valid_pos(i + 3, n) ? V[i + 3] : 1) : 0);
+            V[i] %= 1000000007;
+        }
     }
     return V[0];
 }
